@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>NoteOne - Seu Aplicativo de Notas</title>
+</head>
+<body>
+<div class="container">
+    <div class="logo">
+        <!--<img src="logo.png" alt="NoteOne Logo">-->
+        <span class="logo-text">NoteOne</span>
+    </div>
+
+    <h1>Transformando ideias em notas, e notas em realidade.</h1>
+
+    <form id="note-form" method="POST" action="process.php">
+        <label for="note">Digite sua nota:</label>
+        <br>
+        <textarea id="note" name="note" rows="4" cols="50" required></textarea>
+        <br>
+        <label for="folder">Escolha a pasta:</label>
+        <select id="folder" name="folder" required>
+            <option value="trabalho">Trabalho</option>
+            <option value="pessoal">Pessoal</option>
+            <option value="estudos">Estudos</option>
+        </select>
+        <br>
+        <button type="submit">Salvar Nota</button>
+    </form>
+
+    <aside class="note-list">
+        <h2>Minhas Notas</h2>
+        <ul id="note-list">
+            <!-- Notas serão exibidas aqui via AJAX -->
+        </ul>
+    </aside>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Função para atualizar a lista de notas via AJAX
+        function updateNoteList() {
+            $.get("display.php", function(data) {
+                $("#note-list").html(data);
+            });
+        }
+
+        // Atualizar lista de notas no carregamento e após enviar uma nova nota
+        updateNoteList();
+        $("#note-form").submit(function(e) {
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: $(this).attr("action"),
+                data: $(this).serialize(),
+                success: function() {
+                    updateNoteList();
+                    // Limpar o campo de nota e pasta após o envio
+                    $("#note").val("");
+                    $("#folder").val("");
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
